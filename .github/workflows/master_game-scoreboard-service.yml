@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./GameLogicService/Dockerfile
+          file: ./game-scoreboard-service/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/gamescoreboardservice:${{ github.sha }}
   deploy:
