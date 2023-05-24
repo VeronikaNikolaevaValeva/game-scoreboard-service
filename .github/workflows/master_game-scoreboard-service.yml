@@ -1,0 +1,45 @@
+name: build-and-deploy-docker-image
+
+# Run workflow on push to main or manual trigger
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+        # checkout repository to runner
+      - name: checkout repository
+        uses: actions/checkout@v3
+
+        # Setup docker hub credentials
+      - name: authenticate docker hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+        # Setup extended docker CLI with buildx plugin
+      - name: setup docker buildx
+        uses: docker/setup-buildx-action@v2
+
+        # Build docker image and push it to docker hub repository
+      - name: build and push docker image to docker hub repository
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./GameLogicService/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/gamescoreboardservice:${{ github.sha }}
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+        # Deploy docker hub image to azure with publish auth
+      - name: deploy to azure
+        uses: azure/webapps-deploy@v2
+        with:
+            app-name: 'gamescoreboardservice'
+            publish-profile: ${{ secrets.AZURE_APPSERVICE_PUBLISHPROFILE }}
