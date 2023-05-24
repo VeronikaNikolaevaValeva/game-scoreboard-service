@@ -41,5 +41,5 @@ jobs:
       - name: deploy to azure
         uses: azure/webapps-deploy@v2
         with:
-            app-name: 'gamescoreboardservice'
+            app-name: 'gamescoreabordservice'
             publish-profile: ${{ secrets.AZURE_APPSERVICE_PUBLISHPROFILE }}
