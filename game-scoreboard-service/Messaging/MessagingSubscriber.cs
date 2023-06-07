@@ -98,7 +98,7 @@ namespace game_scoreboard_service.Messaging
         {
             byte[] body = e.Body.ToArray();
             string message = Encoding.Unicode.GetString(body);
-            Console.WriteLine(message);
+            Console.WriteLine("Delete user: " + message);
             emailAddress = JsonSerializer.Deserialize<string>(message);
         }
 
@@ -116,7 +116,7 @@ namespace game_scoreboard_service.Messaging
                 };
                 var jsonString = JsonSerializer.Serialize(deletionResult, options);
                 byte[] body = Encoding.Unicode.GetBytes(jsonString);
-                Console.WriteLine(body);
+                Console.WriteLine("Successfully deleted user: " + body);
                 channel.BasicPublish("DeletedUserExchange", "DeletedUserRoutingKey", null, body);
             }
         }
