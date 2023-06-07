@@ -31,6 +31,6 @@ namespace game_scoreboard_service.Services.Interfaces
         /// Check if there are any accounts to be deleted 
         /// </summary>
         /// <returns>A result from the deletion process</returns>
-        Task<ServiceProduct<string>> DeleteProfileInformation();
+        Task DeleteProfileInformation();
     }
 }
