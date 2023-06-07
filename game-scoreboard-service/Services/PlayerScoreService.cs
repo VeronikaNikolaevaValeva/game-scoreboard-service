@@ -27,7 +27,8 @@ namespace game_scoreboard_service.Services
             if (result.EmailAddress == null) return "No new users";
             var existing = await _playerScoreRepository.GetByPartitionKeyAsync(result.EmailAddress);
             if (existing != null) return "New user in the queue (v), Already exists (v).";
-            var addUserResult = await _playerScoreRepository.AddAsync(new PlayerScore(){
+            var addUserResult = await _playerScoreRepository.AddAsync(new PlayerScore()
+            {
                 PartitionKey = result.EmailAddress,
                 Nickname = result.Username,
                 EmailAddress = result.EmailAddress,
@@ -38,14 +39,14 @@ namespace game_scoreboard_service.Services
                 IncorrectAnswerCount = 0,
                 NonAnsweredCount = 0
             });
-            if(addUserResult is null) return Reject<string>(RejectionCode.General, "New user in the queue (v), Added to db (x).");
+            if (addUserResult is null) return Reject<string>(RejectionCode.General, "New user in the queue (v), Added to db (x).");
             return "New user added.";
         }
-        
+
         public async Task<ServiceProduct<string>> UpdateUserScore()
         {
             var result = _messagingSubscriber.UpdateUserScore();
-            if(result is null) return Reject<string>(RejectionCode.General, "Something went wrong.");
+            if (result is null) return Reject<string>(RejectionCode.General, "Something went wrong.");
             if (String.IsNullOrEmpty(result.EmailAddress) || result is null) return Reject<string>(RejectionCode.General, "Queue was empty.");
             var existingRecord = await _playerScoreRepository.GetByPartitionKeyAsync(result.EmailAddress);
             if (existingRecord is null) return Reject<string>(RejectionCode.General, "User record not found.");
@@ -54,9 +55,9 @@ namespace game_scoreboard_service.Services
             existingRecord.CorrectAnswerCount += result.CorrectAnswerCount;
             existingRecord.IncorrectAnswerCount += result.IncorrectAnswerCount;
             existingRecord.NonAnsweredCount += result.NonAnsweredCount;
-            existingRecord.OverallScore = (existingRecord.CorrectAnswerCount * 100)/ existingRecord.AmountAnsweredQuestions;
+            existingRecord.OverallScore = (existingRecord.CorrectAnswerCount * 100) / existingRecord.AmountAnsweredQuestions;
             var updatedScore = await _playerScoreRepository.UpdateAsync(existingRecord);
-            if(updatedScore is null) return Reject<string>(RejectionCode.General, "Something went wrong.");
+            if (updatedScore is null) return Reject<string>(RejectionCode.General, "Something went wrong.");
             return $"Updated score for user {updatedScore.Nickname}.";
         }
 
@@ -84,6 +85,17 @@ namespace game_scoreboard_service.Services
             userScores.TotalUserScores = playerScoresCount;
             userScores.PageUserScores = page;
             return userScores ?? new ScoreBoardResponse();
+        }
+
+        public async Task DeleteProfileInformation()
+        {
+            var deletableEmailAddress = _messagingSubscriber.DeleteUserData();
+            if (String.IsNullOrEmpty(deletableEmailAddress)) { _messagingSubscriber.DeletedUserData(false); return; }
+
+            var existingUser = await _playerScoreRepository.GetByPartitionKeyAsync(deletableEmailAddress);
+            if (existingUser is null) { _messagingSubscriber.DeletedUserData(false); return; }
+            var deletedUserResult = await _playerScoreRepository.DeleteByPartitionKeyAsync(deletableEmailAddress);
+            _messagingSubscriber.DeletedUserData(deletedUserResult ?? false);
         }
     }
 }

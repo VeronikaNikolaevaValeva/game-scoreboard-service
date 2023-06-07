@@ -88,5 +88,21 @@ namespace game_scoreboard_service.Repositories.Interfaces
         /// <returns>Updated EntityModel.</returns>
         /// <remarks>will only update the entity's table records, this excludes navigation properties for this update the foreign key instead.</remarks>
         Task<T?> UpdateAsync(T entity);
+        
+        /// <summary>
+        /// Deletes a record in the table.
+        /// WARNING: if save changes is set to false, then do the same for other operations and then at the end use method SaveChanges() to save changes from all operations.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>Deleted EntityModel.</returns>
+        Task<bool?> DeleteAsync(T entity);
+
+        /// <summary>
+        /// Deletes a record in the table.
+        /// WARNING: if save changes is set to false, then do the same for other operations and then at the end use method SaveChanges() to save changes from all operations.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>Deleted EntityModel.</returns>
+        Task<bool?> DeleteByPartitionKeyAsync(string key);
     }
 }

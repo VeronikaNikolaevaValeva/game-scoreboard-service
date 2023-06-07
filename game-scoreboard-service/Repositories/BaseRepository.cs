@@ -3,6 +3,7 @@ using game_scoreboard_service.Models;
 using game_scoreboard_service.Repositories.Interfaces;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Drawing;
 using System.Linq.Expressions;
 using System.Net;
@@ -111,6 +112,39 @@ namespace game_scoreboard_service.Repositories
             {
                 // Update Database, if a ConcurrencyException occurs, return null
                 return null;
+            }
+
+        }
+        /// <inheritdoc />
+        public virtual async Task<bool?> DeleteAsync(TEntity entity)
+        {
+            try
+            {
+                _db.Entry(entity).State = EntityState.Deleted;
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Update Database, if a ConcurrencyException occurs, return null
+                return false;
+            }
+
+        }
+        /// <inheritdoc />
+        public virtual async Task<bool?> DeleteByPartitionKeyAsync(string key)
+        {
+            try
+            {
+                var entity = await _findByPartitionKeyAsync(_db, key);
+                _db.Entry(entity).State = EntityState.Deleted;
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Update Database, if a ConcurrencyException occurs, return null
+                return false;
             }
 
         }

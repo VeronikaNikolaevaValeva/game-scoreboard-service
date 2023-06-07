@@ -26,5 +26,11 @@ namespace game_scoreboard_service.Services.Interfaces
         /// </summary>
         /// <returns>A ScoreBoardResponse Entity Model</returns>
         Task<ServiceProduct<ScoreBoardResponse>> GetListOfUserScores(int page);
+
+        /// <summary>
+        /// Check if there are any accounts to be deleted 
+        /// </summary>
+        /// <returns>A result from the deletion process</returns>
+        Task<ServiceProduct<string>> DeleteProfileInformation();
     }
 }
