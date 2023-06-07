@@ -87,15 +87,13 @@ namespace game_scoreboard_service.Services
             return userScores ?? new ScoreBoardResponse();
         }
 
-        public async Task DeleteProfileInformation()
+        public async Task<ServiceProduct<bool>> DeleteProfileInformation(string partitionKey)
         {
-            var deletableEmailAddress = _messagingSubscriber.DeleteUserData();
-            if (String.IsNullOrEmpty(deletableEmailAddress)) { _messagingSubscriber.DeletedUserData(false); return; }
-
-            var existingUser = await _playerScoreRepository.GetByPartitionKeyAsync(deletableEmailAddress);
-            if (existingUser is null) { _messagingSubscriber.DeletedUserData(false); return; }
-            var deletedUserResult = await _playerScoreRepository.DeleteByPartitionKeyAsync(deletableEmailAddress);
-            _messagingSubscriber.DeletedUserData(deletedUserResult ?? false);
+            var existingUser = await _playerScoreRepository.GetByPartitionKeyAsync(partitionKey);
+            if (existingUser is null) return Reject<bool>(RejectionCode.General, "User data not found.");
+            var deletedUserResult = await _playerScoreRepository.DeleteAsync(existingUser);
+            if(!deletedUserResult ?? true) return Reject<bool>(RejectionCode.General, "User data could not be deleted.");
+            return true;
         }
     }
 }

@@ -19,15 +19,15 @@ namespace game_scoreboard_service.Messaging.Interfaces
         /// <returns>The recieved data from the queue - emty entity model if no data was recieved.</returns>
         UpdatedUserScore UpdateUserScore();
 
-        /// <summary>
-        /// Listens up to a queue and recieve messages when any of the existing users daata has to be deleted.
-        /// </summary>
-        /// <returns>The recieved data from the queue - emty string if no data was recieved.</returns>
-        string DeleteUserData();
+        ///// <summary>
+        ///// Listens up to a queue and recieve messages when any of the existing users daata has to be deleted.
+        ///// </summary>
+        ///// <returns>The recieved data from the queue - emty string if no data was recieved.</returns>
+        //string DeleteUserData();
 
-        /// <summary>
-        /// Notifies the game logic service if the deletion of the user was successful. 
-        /// </summary>
-        void DeletedUserData(bool deletionResult);
+        ///// <summary>
+        ///// Notifies the game logic service if the deletion of the user was successful. 
+        ///// </summary>
+        //void DeletedUserData(bool deletionResult);
     }
 }

@@ -77,48 +77,48 @@ namespace game_scoreboard_service.Messaging
             updatedUserScore = JsonSerializer.Deserialize<UpdatedUserScore>(message);
         }
         
-        public string DeleteUserData()
-        {
-            using (IConnection connection = connectionFactory.CreateConnection())
-            {
-                IModel channel = connection.CreateModel();
-                channel.ExchangeDeclare("DeleteUserExchange", ExchangeType.Topic, true);
+        //public string DeleteUserData()
+        //{
+        //    using (IConnection connection = connectionFactory.CreateConnection())
+        //    {
+        //        IModel channel = connection.CreateModel();
+        //        channel.ExchangeDeclare("DeleteUserExchange", ExchangeType.Topic, true);
 
-                channel.QueueDeclare("DeleteUserQueue", true, false, false, null);
-                channel.QueueBind("DeleteUserQueue", "DeleteUserExchange", "DeleteUserRoutingKey");
+        //        channel.QueueDeclare("DeleteUserQueue", true, false, false, null);
+        //        channel.QueueBind("DeleteUserQueue", "DeleteUserExchange", "DeleteUserRoutingKey");
 
-                var consumer = new EventingBasicConsumer(channel);
-                consumer.Received += Consumer_Received_DeleteUserData;
-                channel.BasicConsume("DeleteUserQueue", true, consumer);
-            }
-            return emailAddress;
-        }
+        //        var consumer = new EventingBasicConsumer(channel);
+        //        consumer.Received += Consumer_Received_DeleteUserData;
+        //        channel.BasicConsume("DeleteUserQueue", true, consumer);
+        //    }
+        //    return emailAddress;
+        //}
 
-        private void Consumer_Received_DeleteUserData(object? sender, BasicDeliverEventArgs e)
-        {
-            byte[] body = e.Body.ToArray();
-            string message = Encoding.Unicode.GetString(body);
-            Console.WriteLine("Delete user: " + message);
-            emailAddress = JsonSerializer.Deserialize<string>(message);
-        }
+        //private void Consumer_Received_DeleteUserData(object? sender, BasicDeliverEventArgs e)
+        //{
+        //    byte[] body = e.Body.ToArray();
+        //    string message = Encoding.Unicode.GetString(body);
+        //    Console.WriteLine("Delete user: " + message);
+        //    emailAddress = JsonSerializer.Deserialize<string>(message);
+        //}
 
 
-        public void DeletedUserData(bool deletionResult)
-        {
-            using (IConnection connection = connectionFactory.CreateConnection())
-            {
-                IModel channel = connection.CreateModel();
-                channel.ExchangeDeclare("DeletedUserExchange", ExchangeType.Topic, true);
+        //public void DeletedUserData(bool deletionResult)
+        //{
+        //    using (IConnection connection = connectionFactory.CreateConnection())
+        //    {
+        //        IModel channel = connection.CreateModel();
+        //        channel.ExchangeDeclare("DeletedUserExchange", ExchangeType.Topic, true);
 
-                var options = new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                };
-                var jsonString = JsonSerializer.Serialize(deletionResult, options);
-                byte[] body = Encoding.Unicode.GetBytes(jsonString);
-                Console.WriteLine("Successfully deleted user: " + body);
-                channel.BasicPublish("DeletedUserExchange", "DeletedUserRoutingKey", null, body);
-            }
-        }
+        //        var options = new JsonSerializerOptions
+        //        {
+        //            WriteIndented = true
+        //        };
+        //        var jsonString = JsonSerializer.Serialize(deletionResult, options);
+        //        byte[] body = Encoding.Unicode.GetBytes(jsonString);
+        //        Console.WriteLine("Successfully deleted user: " + body);
+        //        channel.BasicPublish("DeletedUserExchange", "DeletedUserRoutingKey", null, body);
+        //    }
+        //}
     }
 }
