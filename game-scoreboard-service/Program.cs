@@ -49,8 +49,6 @@ app.UseCors(builder =>
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
 
 app.MapHub<ScoreboardHub>("/scoreboard");
