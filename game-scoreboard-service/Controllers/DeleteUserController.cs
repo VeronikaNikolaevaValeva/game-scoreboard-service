@@ -21,6 +21,7 @@ namespace game_scoreboard_service.Controllers
         [ActionName("DeleteUserInfo")]
         public async Task<ActionResult<string>> DeleteUserInfo([FromBody] string partitionKey)
         {
+            Console.WriteLine("somthing");
             var result = await _playerScoreService.DeleteProfileInformation(partitionKey);
             if (!result.Success && result.RejectionCode == RejectionCode.General)
                 return Ok(result.RejectionReason);
