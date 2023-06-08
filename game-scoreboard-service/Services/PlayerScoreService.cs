@@ -93,7 +93,7 @@ namespace game_scoreboard_service.Services
             if (existingUser is null)
             {
                 Console.WriteLine("User data not found.");
-                return Reject<bool>(RejectionCode.General, "User data not found.");
+                return true;
             }
             var deletedUserResult = await _playerScoreRepository.DeleteAsync(existingUser);
             if (!deletedUserResult ?? true)
