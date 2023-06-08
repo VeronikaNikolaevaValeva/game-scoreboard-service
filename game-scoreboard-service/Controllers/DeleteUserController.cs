@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace game_scoreboard_service.Controllers
 {
     [Route("api/[controller]/[action]")]
-    [Authorize]
     [ApiController]
     public class DeleteUserController : ControllerBase
     {
