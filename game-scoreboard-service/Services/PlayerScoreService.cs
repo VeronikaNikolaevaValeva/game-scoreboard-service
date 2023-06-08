@@ -90,9 +90,17 @@ namespace game_scoreboard_service.Services
         public async Task<ServiceProduct<bool>> DeleteProfileInformation(string partitionKey)
         {
             var existingUser = await _playerScoreRepository.GetByPartitionKeyAsync(partitionKey);
-            if (existingUser is null) return Reject<bool>(RejectionCode.General, "User data not found.");
+            if (existingUser is null)
+            {
+                Console.WriteLine("User data not found.");
+                return Reject<bool>(RejectionCode.General, "User data not found.");
+            }
             var deletedUserResult = await _playerScoreRepository.DeleteAsync(existingUser);
-            if(!deletedUserResult ?? true) return Reject<bool>(RejectionCode.General, "User data could not be deleted.");
+            if (!deletedUserResult ?? true)
+            {
+                Console.WriteLine("User data not found.");
+                return Reject<bool>(RejectionCode.General, "User data could not be deleted.");
+            }
             return true;
         }
     }
